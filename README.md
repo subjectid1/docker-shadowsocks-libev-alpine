@@ -10,7 +10,7 @@ services:
         volumes:
             - ./config-local.json:/etc/shadowsocks-libev/config.json
         ports:
-          - 1080:1080
+            - 1080:1080
         environment:
             RUN_MODE: local
 ```
@@ -25,7 +25,7 @@ services:
         volumes:
             - ./config-server.json:/etc/shadowsocks-libev/config.json
         ports:
-          - 9999:9999
+            - 9999:9999
         environment:
             RUN_MODE: server
 ```
