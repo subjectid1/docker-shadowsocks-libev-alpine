@@ -15,6 +15,18 @@ services:
             RUN_MODE: local
 ```
 
+```json
+{
+    "server": "x.x.x.x",
+    "server_port": 9999,
+    "local_address": "0.0.0.0",
+    "local_port": 1080,
+    "password": "xxxxxx",
+    "timeout": 60,
+    "method": "chacha20-ietf-poly1305"
+}
+```
+
 ## server model
 
 ```yaml
@@ -28,4 +40,14 @@ services:
             - 9999:9999
         environment:
             RUN_MODE: server
+```
+
+```json
+{
+    "server": "0.0.0.0",
+    "server_port": 9999,
+    "password": "xxxxxx",
+    "timeout": 60,
+    "method": "chacha20-ietf-poly1305"
+}
 ```
