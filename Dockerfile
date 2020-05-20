@@ -18,7 +18,7 @@ RUN set -ex \
     && cd shadowsocks-libev \
     && ./autogen.sh \
     && ./configure --prefix=/usr --disable-documentation \
-    && make install -j4 \
+    && make install -j $(nproc) \
     && apk del --purge .build-deps \
     && apk add --no-cache \
         curl \
