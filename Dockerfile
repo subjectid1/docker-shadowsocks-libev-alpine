@@ -28,4 +28,4 @@ RUN set -ex \
         | sort -u) \
     && rm -rf /tmp/*
 
-CMD ['/bin/sh']
+CMD ["/bin/sh"]
