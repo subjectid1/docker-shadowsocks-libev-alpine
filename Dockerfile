@@ -14,7 +14,7 @@ RUN set -ex \
         mbedtls-dev \
         pcre-dev \
     && cd /tmp \
-    && git clone --recursive "https://github.com/shadowsocks/shadowsocks-libev" \
+    && git clone --depth=1 --recursive "https://github.com/shadowsocks/shadowsocks-libev" \
     && cd shadowsocks-libev \
     && ./autogen.sh \
     && ./configure --prefix=/usr --disable-documentation \
