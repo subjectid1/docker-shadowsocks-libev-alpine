@@ -17,7 +17,12 @@ RUN set -ex \
     && git clone --depth=1 --recursive "https://github.com/shadowsocks/shadowsocks-libev" \
     && cd shadowsocks-libev \
     && ./autogen.sh \
-    && ./configure --prefix=/usr --disable-documentation \
+    && ./configure \
+        --prefix=/usr \
+        --sysconfdir=/etc \
+        --mandir=/usr/share/man \
+        --localstatedir=/var \
+        --disable-documentation \
     && make -j $(nproc) \
     && strip src/ss-local \
     && strip src/ss-manager \
@@ -29,18 +34,19 @@ FROM alpine:latest
 
 RUN set -xe \
     && apk add --no-cache \
-        ca-certificates \
         c-ares \
         libev \
         libsodium \
         mbedtls \
         pcre
 
-COPY --from=builder /tmp/shadowsocks-libev/src/ss-local     /usr/bin/ss-local
-COPY --from=builder /tmp/shadowsocks-libev/src/ss-manager   /usr/bin/ss-manager
-COPY --from=builder /tmp/shadowsocks-libev/src/ss-nat       /usr/bin/ss-nat
-COPY --from=builder /tmp/shadowsocks-libev/src/ss-redir     /usr/bin/ss-redir
-COPY --from=builder /tmp/shadowsocks-libev/src/ss-server    /usr/bin/ss-server
-COPY --from=builder /tmp/shadowsocks-libev/src/ss-tunnel    /usr/bin/ss-tunnel
+# ss-nat is only for OpenWRT, ignore it
+COPY --from=builder \
+    /tmp/shadowsocks-libev/src/ss-local \
+    /tmp/shadowsocks-libev/src/ss-manager \
+    /tmp/shadowsocks-libev/src/ss-redir \
+    /tmp/shadowsocks-libev/src/ss-server \
+    /tmp/shadowsocks-libev/src/ss-tunnel \
+    /usr/bin/
 
 CMD ["/bin/sh"]
