@@ -1,16 +1,16 @@
-FROM alpine:latest
+FROM alpine:latest AS builder
 
 RUN set -ex \
-    && apk add --no-cache --virtual .build-deps \
+    && apk add --no-cache \
         git \
+        build-base \
         autoconf \
         automake \
-        build-base \
+        libtool \
+        linux-headers \
         c-ares-dev \
         libev-dev \
-        libtool \
         libsodium-dev \
-        linux-headers \
         mbedtls-dev \
         pcre-dev \
     && cd /tmp \
@@ -18,14 +18,29 @@ RUN set -ex \
     && cd shadowsocks-libev \
     && ./autogen.sh \
     && ./configure --prefix=/usr --disable-documentation \
-    && make install -j $(nproc) \
-    && apk del --purge .build-deps \
+    && make -j $(nproc) \
+    && strip src/ss-local \
+    && strip src/ss-manager \
+    && strip src/ss-redir \
+    && strip src/ss-server \
+    && strip src/ss-tunnel
+
+FROM alpine:latest
+
+RUN set -xe \
     && apk add --no-cache \
-        curl \
-        rng-tools \
-        $(scanelf --needed --nobanner /usr/bin/ss-* \
-        | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
-        | sort -u) \
-    && rm -rf /tmp/*
+        ca-certificates \
+        c-ares \
+        libev \
+        libsodium \
+        mbedtls \
+        pcre
+
+COPY --from=builder /tmp/shadowsocks-libev/src/ss-local     /usr/bin/ss-local
+COPY --from=builder /tmp/shadowsocks-libev/src/ss-manager   /usr/bin/ss-manager
+COPY --from=builder /tmp/shadowsocks-libev/src/ss-nat       /usr/bin/ss-nat
+COPY --from=builder /tmp/shadowsocks-libev/src/ss-redir     /usr/bin/ss-redir
+COPY --from=builder /tmp/shadowsocks-libev/src/ss-server    /usr/bin/ss-server
+COPY --from=builder /tmp/shadowsocks-libev/src/ss-tunnel    /usr/bin/ss-tunnel
 
 CMD ["/bin/sh"]
