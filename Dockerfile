@@ -1,5 +1,5 @@
 FROM alpine:latest AS builder
-EXPOSE 8888
+
 RUN set -ex \
     && apk add --no-cache \
         git \
@@ -48,5 +48,5 @@ COPY --from=builder \
     /tmp/shadowsocks-libev/src/ss-server \
     /tmp/shadowsocks-libev/src/ss-tunnel \
     /usr/bin/
-
+EXPOSE 8888
 CMD ["/bin/sh"]
