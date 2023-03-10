@@ -1,5 +1,5 @@
 FROM alpine:latest AS builder
-
+EXPOSE 8888
 RUN set -ex \
     && apk add --no-cache \
         git \
